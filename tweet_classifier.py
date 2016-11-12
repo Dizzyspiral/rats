@@ -13,6 +13,9 @@ def classify_tweet(tweet_file):
         print("Load a classifier before calling classify_tweet")
         return
 
+    # In case the file has no lines, we create the variable here, to avoid unreferenced errors.
+    ret = "Error"
+
     # Classify tweets
     with open(tweet_file, 'rt') as f:
         for line in f:
