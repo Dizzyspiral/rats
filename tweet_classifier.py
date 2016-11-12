@@ -1,5 +1,6 @@
 import pickle
 import sys
+import os
 
 classifier = None
 
@@ -13,24 +14,50 @@ def classify_tweet(tweet_file):
         return
 
     # Classify tweets
-    with open(tweet_file, 'rb') as f:
+    with open(tweet_file, 'rt') as f:
         for line in f:
             words = line.split()
             features = dict([(word, True) for word in words])
             ret = classifier.classify(features)
-            print(ret)
 
     # This just returns pos/neg. How do we get probabilities?
     return ret
 
+def classify_tweets(tweet_folder):
+    results = []
+
+    for tweet_file in os.listdir(tweet_folder):
+        results.append(classify_tweet(tweet_folder + os.sep + tweet_file))
+
+    return results
+
+def write_multiple_results(results, results_file):
+    with open(results_file, 'wt') as f:
+        for result in results:
+            f.write(result)
+            f.write('\n')
+
+def write_results(results, results_file):
+    if hasattr(results, '__iter__'):
+        write_multiple_results(results, results_file)
+    else:
+        with open(results_file, 'wt') as f:
+            f.write(results)
+
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print("Usage: " + sys.argv[0] + " pickle-file, tweet-file")
+    if len(sys.argv) < 4:
+        print("Usage: " + sys.argv[0] + " pickle-file tweet-file output-file")
         exit()
 
     load_classifier(sys.argv[1])
 
-    # Debugging an issue where everything seems to come out pos, and all the informative features are pos
-    print(classifier.most_informative_features(100))
+    if os.path.isdir(sys.argv[2]):
+        results = classify_tweets(sys.argv[2])
+    elif os.path.isfile(sys.argv[2]):
+        results = classify_tweet(sys.argv[2])
+    else:
+        print("tweet-file must be a file or a directory")
+        exit()
 
-    classify_tweet(sys.argv[2])
+    write_results(results, sys.argv[3])
+

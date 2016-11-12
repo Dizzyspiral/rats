@@ -26,7 +26,12 @@ def main():
             tweet_count += 1
             tweet = json.loads(raw_tweet)
             with open(output_dir + os.sep + tweet_basename + str(tweet_count) + file_extension, 'wt') as output_file:
-                output_file.write(tweet["text"])
+                try:
+                    output_file.write(tweet["text"])
+                except:
+                    # Occasionally, a tweet doesn't have a text field. This
+                    # is due to retweets I think. We just let them fail silently.
+                    pass
 
 if __name__ == '__main__':
     main()
