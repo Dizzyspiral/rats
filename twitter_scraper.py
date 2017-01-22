@@ -10,15 +10,15 @@ api = Api(ratsconfig.CONSUMER_KEY,
           ratsconfig.ACCESS_TOKEN,
           ratsconfig.ACCESS_TOKEN_SECRET)
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage:" + sys.argv[0] + " output-file")
-        exit()
-
+def scrape_tweets():
     with open(sys.argv[1], 'a') as f:
         for line in api.GetStreamFilter(track=ratsconfig.FOLLOW):
             f.write(json.dumps(line))
             f.write('\n')
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 2:
+        print("Usage:" + sys.argv[0] + " output-file")
+        exit()
+
+    scrape_tweets()
