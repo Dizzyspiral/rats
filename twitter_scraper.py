@@ -1,5 +1,4 @@
 import sys
-import os
 import json
 
 from twitter import Api
@@ -10,9 +9,9 @@ api = Api(ratsconfig.CONSUMER_KEY,
           ratsconfig.ACCESS_TOKEN,
           ratsconfig.ACCESS_TOKEN_SECRET)
 
-def scrape_tweets():
-    with open(sys.argv[1], 'a') as f:
-        for line in api.GetStreamFilter(track=ratsconfig.FOLLOW):
+def scrape_tweets(tags, outfile):
+    with open(outfile, 'a') as f:
+        for line in api.GetStreamFilter(track=tags):
             f.write(json.dumps(line))
             f.write('\n')
 
@@ -21,4 +20,5 @@ if __name__ == '__main__':
         print("Usage:" + sys.argv[0] + " output-file")
         exit()
 
-    scrape_tweets()
+    tags=ratsconfig.FOLLOW
+    scrape_tweets(tags, sys.argv[1])

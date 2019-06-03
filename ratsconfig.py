@@ -9,9 +9,15 @@ TAGFILE = "tags.txt"
 def get_tags():
     tags = []
 
-    with open(TAGFILE) as f:
-       for word in f.read().split():
-            tags.append(word)
+    try:
+        with open(TAGFILE) as f:
+           for word in f.read().split():
+                tags.append(word)
+    except:
+        # If TAGFILE does not exist or cannot be read, we give tags 
+        # an invalid value, so that other modules which use this can 
+        # detect it and handle the error how they'd like.
+        tags = None
 
     return tags 
 
