@@ -13,6 +13,11 @@ def calculate_percentages(results):
 
     return percentages
 
+def print_percentages(p):
+    for label, percentage in p.items():
+        label = label.strip('\n')
+        print("%s: %s" % (label, percentage))
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: " + sys.argv[0] + " results-file")
@@ -24,7 +29,8 @@ def main():
         for line in f:
             results.append(line)
 
-    print(calculate_percentages(results))
+    p = calculate_percentages(results)
+    print_percentages(p)
 
 if __name__ == '__main__':
     main()
