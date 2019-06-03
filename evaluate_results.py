@@ -8,8 +8,6 @@ def calculate_percentages(results):
     for result in results:
         percentages[result] += 1
 
-#    print(percentages)
-
     for classifier, value in percentages.items():
         percentages[classifier] = float(value) / float(len(results))
 
