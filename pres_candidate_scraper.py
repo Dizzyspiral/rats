@@ -1,7 +1,9 @@
 import threading
 import time
 
-import hourly_scraper
+from twitter_scrapers import SubstreamScraper
+from tweet_files import HourlyTweetFile
+from timers import HourlyTimer
 
 candidates = {
 #        'michael_bennet': ['@MichaelBennet', '@SenatorBennet'],
@@ -32,19 +34,17 @@ candidates = {
 #        'andrew_yang': ['@AndrewYang'],
 }
 
-class ScraperThread(threading.Thread):
-    def __init__(self, tags, candidate):
-        threading.Thread.__init__(self)
-        self.tags = tags
-        self.candidate = candidate
-    
-    def run(self):
-        hourly_scraper.scrape_tweets(self.tags, self.candidate + ".json")
-
 if __name__ == '__main__':
+    scraper = SubstreamScraper()
+    tweet_files = []
+    timer_callbacks = []
+
     for candidate, tags in candidates.items():
         print("Making scraper thread for '%s', '%s'" % (candidate, tags))
-        thread = ScraperThread(tags, candidate)
-        thread.start()
-        # We sleep briefly so that twitter doesn't get all upset about us requesting a bunch of streams really quickly
-        time.sleep(1) 
+        tweet_files.append(HourlyTweetFile(candidate + '.json'))
+        scraper.add_substream(tags, lambda tweet, tf=tweet_files[-1]: tf.write_tweet(tweet))
+        timer_callbacks.append(lambda tf=tweet_files[-1]: tf.update_file_handle())
+
+    timer = HourlyTimer(timer_callbacks)
+    scraper.start()
+
