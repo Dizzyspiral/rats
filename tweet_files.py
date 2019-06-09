@@ -12,7 +12,7 @@ class HourlyTweetFile():
 
     def make_filename(self):
         now = datetime.datetime.now()
-        return "%s%s%d-%d-%d_%d_%s" % (self.directory, os.sep, now.month, now.day, now.year, now.minute, self.basename)
+        return "%s%s%d-%d-%d_%d_%s" % (self.directory, os.sep, now.month, now.day, now.year, now.hour, self.basename)
 
     def update_file_handle(self):
         print("[HourlyTweetFile] Updating file handle")
