@@ -7,7 +7,7 @@ from timers import HourlyTimer
 
 candidates = {
 #        'michael_bennet': ['@MichaelBennet', '@SenatorBennet'],
-        'joe_biden': ['biden', '@JoeBiden'],
+        'joe_biden': ['@JoeBiden'],
 #        'bill_de_blasio': ['@billdeBlasio', '@NYCMayor'],
 #        'cory_booker': ['@CoryBooker', '@CoryABooker2020', '@SenBooker'],
 #        'steve_bullock': ['@GovernorBullock'],
@@ -25,9 +25,9 @@ candidates = {
 #        'seth_moulton': ['@sethmoulton', '@teammoulton'],
         'beto_orourke': ['@BetoORourke', '@RepBetoORourke'],
 #        'tim_ryan': ['@TimRyan', '@RepTimRyan'],
-        'bernie_sanders': ['bernie', '@SenSanders', '@BernieSanders', '@TheBern2020'],
+        'bernie_sanders': ['@SenSanders', '@BernieSanders', '@TheBern2020'],
 #        'eric_swalwell': ['@RepSwalwell', '@ericswalwell'],
-        'donald_trump': ['@realDonaldTrump', '@POTUS', 'trump'],
+        'donald_trump': ['@realDonaldTrump', '@POTUS'],
         'elizabeth_warren': ['@SenWarren', '@ewarren'],
 #        'bill_weld': ['@GovBillWeld'],
 #        'marianne_williamson': ['@marwilliamson'],
@@ -40,11 +40,12 @@ if __name__ == '__main__':
     timer_callbacks = []
 
     for candidate, tags in candidates.items():
-        print("Making scraper thread for '%s', '%s'" % (candidate, tags))
-        tweet_files.append(HourlyTweetFile(candidate + '.json'))
+        print("[Main] Making scraper thread for '%s', '%s'" % (candidate, tags))
+        tweet_files.append(HourlyTweetFile(candidate + '.json', 'tweets'))
         scraper.add_substream(tags, lambda tweet, tf=tweet_files[-1]: tf.write_tweet(tweet))
         timer_callbacks.append(lambda tf=tweet_files[-1]: tf.update_file_handle())
 
     timer = HourlyTimer(timer_callbacks)
     scraper.start()
+    timer.start()
 

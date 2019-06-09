@@ -1,18 +1,21 @@
 import threading
 import json
 import datetime
+import os
 
 class HourlyTweetFile():
-    def __init__(self, basename):
+    def __init__(self, basename, directory):
         self.file_lock = threading.Lock()
         self.basename = basename
+        self.directory = directory
         self.update_file_handle()
 
     def make_filename(self):
         now = datetime.datetime.now()
-        return "%d-%d-%d_%d_%s" % (now.month, now.day, now.year, now.hour, self.basename)
+        return "%s%s%d-%d-%d_%d_%s" % (self.directory, os.sep, now.month, now.day, now.year, now.minute, self.basename)
 
     def update_file_handle(self):
+        print("[HourlyTweetFile] Updating file handle")
         filename = self.make_filename()
         self.file_lock.acquire()
 
