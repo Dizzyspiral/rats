@@ -8,22 +8,21 @@ def load_classifier(pickle_file):
     global classifier
     classifier = pickle.load(open(pickle_file, 'rb'))
 
-def classify_tweet(tweet_file):
+def classify_tweet_text(tweet):
     if classifier == None:
-        print("Load a classifier before calling classify_tweet")
+        print("Load a classifier before calling classify_tweet_text")
         return
 
-    # In case the file has no lines, we create the variable here, to avoid unreferenced errors.
-    ret = "Error"
+    words = tweet.split()
+    features = dict([(word, True) for word in words])
+    ret = classifier.classify(features)
 
-    # Classify tweets
+    return ret
+
+def classify_tweet(tweet_file):
     with open(tweet_file, 'rt') as f:
-        for line in f:
-            words = line.split()
-            features = dict([(word, True) for word in words])
-            ret = classifier.classify(features)
+        ret = classify_tweet_text(f)
 
-    # This just returns pos/neg. How do we get probabilities?
     return ret
 
 def classify_tweets(tweet_folder):
