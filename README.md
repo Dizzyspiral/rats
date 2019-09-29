@@ -12,11 +12,13 @@ The following sections explain how to reproduce my results and start evaluating 
 
 ### Prerequisites
 We need `nltk` to train and use our classifier, and we need `python-twitter` to scrape twitter.
+We're also going to need numpy, as it's a dependency of the trainer.
 Install them by running these commands:
 
 ```
 pip install nltk
 pip install python-twitter
+pip install numpy
 ```
 
 Note that the `python-twitter` package is NOT the same as the `twitter` package.
@@ -114,6 +116,9 @@ pos recall: 0.948400
 pos f-measure: 0.953453
 dumping NaiveBayesClassifier to /home/dizzyspiral/nltk_data/classifiers/train_NaiveBayes.pickle
 ```
+
+If it didn't work, make sure you have numpy installed.
+You might also need to try python2 instead of python3.
 
 I'm not going to go into any detail on the classifier - but I highly recommend you learn how it works if you plan on tweaking the training data or using the classifier on unique data, as changing the parameters of a classifier can have drastic results.
 
