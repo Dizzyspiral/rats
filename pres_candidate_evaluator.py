@@ -4,6 +4,8 @@ import os
 import glob
 import re
 from collections import defaultdict
+import datetime
+from time import sleep
 
 import tweet_classifier
 import evaluate_results
@@ -17,7 +19,7 @@ def get_most_recent_filenames(directory, num_files):
     Gets num_files number of recent files' names from directory, sorts the 
     names by file modified time, and returns them
     """
-    files = list(filter(os.path.isfile, glob.glob(directory + os.sep + "*")))
+    files = list(filter(os.path.isfile, glob.glob(directory + os.sep + "*.json")))
     files.sort(key=lambda x: os.path.getmtime(x))
     
     # XXX Hack: we don't want to include the most recent hour, as we're still 
@@ -70,7 +72,7 @@ def get_class_labels_from_file(f):
     
 def get_percent_positive(results):
     percent_results = evaluate_results.calculate_percentages(results)
-    return percent_results['pos']
+    return percent_results['pos'] * 100
 
 def get_p_pos_from_file(f):
     r = get_class_labels_from_file(f)
@@ -114,25 +116,60 @@ def build_js_data(xlabels, results):
 
     return js
 
+def update_data(tweets_dir, num_hours, num_candidates):
+    tweet_filenames = get_most_recent_filenames(tweets_dir, num_hours * num_candidates)
+    xlabels = build_xaxis_labels(tweet_filenames)
+    results = build_results(tweet_filenames)
+
+    return xlabels, results
+
+def write_data_to_js(xlabels, data, jsfile):
+    js = build_js_data(xlabels, results)
+
+    with open(jsfile, 'w') as f:
+        f.write(js)
+
+# This was yanked from hourly_scraper, so maybe we want to toss this function 
+# somewhere shared so it's not duplicated.
+def detect_hour_change():
+    """ Watches the current time to see when the hour changes """
+    prev_hour = datetime.datetime.now().hour
+
+    while prev_hour == datetime.datetime.now().hour:
+        sleep(60) # Yield execution to anything else
+
+    # We get here once the hour has changed
+    return True
+
 def print_usage():
     """Prints out how to use this script"""
-    print(sys.argv[0] + " classifier_pickle tweets_directory")
+    print(sys.argv[0] + " classifier_pickle tweets_directory javascript_outfile")
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print_usage()
         exit()
 
     classifier_pickle = sys.argv[1]
     tweets_dir = sys.argv[2]
+    jsfile = sys.argv[3]
 
     tweet_classifier.load_classifier(classifier_pickle)
-    tweet_filenames = get_most_recent_filenames(tweets_dir, num_hours * num_candidates)
-    xlabels = build_xaxis_labels(tweet_filenames)
-    print(xlabels)
-    results = build_results(tweet_filenames)
-    print(results)
-    js = build_js_data(xlabels, results)
+    xlabels, results = update_data(tweets_dir, num_hours, num_candidates)
 
-    with open('data.js', 'w') as f:
-        f.write(js)
+    while(True):
+        print("[Main] Updating javascript data")
+        write_data_to_js(xlabels, results, jsfile)
+        detect_hour_change()
+        new_labels, new_results = update_data(tweets_dir, 1, num_candidates)
+        xlabels.extend(new_labels)
+
+        for candidate, res in new_results.items():
+            results[candidate].extend(res)
+
+        if len(xlabels) > num_hours:
+            amount_to_trim = len(xlabels) - num_hours
+            xlabels = xlabels[amount_to_trim:]
+
+            for candidate in results.keys():
+                results[candidate] = results[candidate][amount_to_trim:]
