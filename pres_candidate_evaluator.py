@@ -11,7 +11,7 @@ import tweet_classifier
 import evaluate_results
 
 # Eventually, we should remove num_candidates and just detect it from the contents of the tweet directory
-num_hours = 24 # 24 hours worth of tweets
+num_hours = 72 # hours worth of tweets
 num_candidates = 4 # number of candidates being tracked
 
 def get_most_recent_filenames(directory, num_files):
@@ -56,8 +56,12 @@ def get_tweets_from_file(tweet_filename):
 
     with open(tweet_filename, 'r') as f:
         for raw_tweet in f:
-            tweet = json.loads(raw_tweet)
-            tweets.append(tweet["text"])
+            try:
+                tweet = json.loads(raw_tweet)
+                tweets.append(tweet["text"])
+            except Exception as e:
+                print("Got exception loading tweet as JSON (ignoring tweet and continuing):\n")
+                print(e)
 
     return tweets
 
@@ -141,11 +145,21 @@ def detect_hour_change():
     # We get here once the hour has changed
     return True
 
+def print_art():
+    print("""_____.___.             .__                      __                
+\__  |   |__  _______  |  | ___.__.__ _______ _/  |_  ___________ 
+ /   |   \  \/ /\__  \ |  |<   |  |  |  \__  \\\\   __\/  _ \_  __ \\
+ \____   |\   /  / __ \|  |_\___  |  |  // __ \|  | (  <_> )  | \/
+ / ______| \_/  (____  /____/ ____|____/(____  /__|  \____/|__|   
+ \/                  \/     \/               \/                   \n""")
+
 def print_usage():
     """Prints out how to use this script"""
     print(sys.argv[0] + " classifier_pickle tweets_directory javascript_outfile")
 
 if __name__ == '__main__':
+    print_art()
+
     if len(sys.argv) < 4:
         print_usage()
         exit()

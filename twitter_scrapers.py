@@ -21,13 +21,19 @@ class SubstreamScraper(threading.Thread):
         self.tags.extend(tags)
 
     def run(self):
-        for tweet in api.GetStreamFilter(track=self.tags):
-            raw_tweet = json.dumps(tweet)
-            for tags, callback in self.substreams:
-                for tag in tags:
-                    if raw_tweet.find(tag) != -1:
-                        callback(tweet)
-                        break
+        try:
+            for tweet in api.GetStreamFilter(track=self.tags):
+                raw_tweet = json.dumps(tweet)
+                for tags, callback in self.substreams:
+                    for tag in tags:
+                        if raw_tweet.find(tag) != -1:
+                            callback(tweet)
+                            break
+        except Exception as e:
+            print("[SubstreamScraper] Caught exception in run loop:\n")
+            print(e)
+
+        print("[SubstreamScraper] exiting run loop")
 
 class Scraper(threading.Thread):
     def __init__(self, tags, callback):

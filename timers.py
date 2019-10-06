@@ -17,7 +17,7 @@ class HourlyTimer(threading.Thread):
         prev_hour = datetime.datetime.now().hour
 
         while prev_hour == datetime.datetime.now().hour:
-            time.sleep(0) # Yield execution to another thread
+            time.sleep(1) # Yield execution to another thread
 
         # We get here once the hour has changed
         return True

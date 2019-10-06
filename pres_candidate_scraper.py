@@ -34,7 +34,16 @@ candidates = {
 #        'andrew_yang': ['@AndrewYang'],
 }
 
+def print_art():
+    print("""  ___________                                              
+ /   _____/  | ______________  ___.__.______   ___________ 
+ \_____  \|  |/ /\_  __ \__  \<   |  |\____ \_/ __ \_  __ \\
+ /        \    <  |  | \// __ \\\\___  ||  |_> >  ___/|  | \/
+/_______  /__|_ \ |__|  (____  / ____||   __/ \___  >__|   
+        \/     \/            \/\/     |__|        \/       \n""")
+
 if __name__ == '__main__':
+    print_art()
     scraper = SubstreamScraper()
     tweet_files = []
     timer_callbacks = []
