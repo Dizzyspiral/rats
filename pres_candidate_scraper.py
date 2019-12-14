@@ -34,6 +34,9 @@ candidates = {
 #        'andrew_yang': ['@AndrewYang'],
 }
 
+# Sigh... global variable. Might be able to fix this, easy hack for now.
+scraper = None
+
 def print_art():
     print("""  ___________                                              
  /   _____/  | ______________  ___.__.______   ___________ 
@@ -42,19 +45,30 @@ def print_art():
 /_______  /__|_ \ |__|  (____  / ____||   __/ \___  >__|   
         \/     \/            \/\/     |__|        \/       \n""")
 
-if __name__ == '__main__':
-    print_art()
+def create_scraper():
+    global scraper
+
     scraper = SubstreamScraper()
     tweet_files = []
-    timer_callbacks = []
 
     for candidate, tags in candidates.items():
         print("[Main] Making scraper thread for '%s', '%s'" % (candidate, tags))
         tweet_files.append(HourlyTweetFile(candidate + '.json', 'tweets'))
         scraper.add_substream(tags, lambda tweet, tf=tweet_files[-1]: tf.write_tweet(tweet))
-        timer_callbacks.append(lambda tf=tweet_files[-1]: tf.update_file_handle())
 
-    timer = HourlyTimer(timer_callbacks)
     scraper.start()
+   
+def restart_scraper(scraper):
+    scraper.force_exit = True
+    scraper.join()
+    create_scraper()
+    print("[Main] Successfully restarted scraper")
+
+if __name__ == '__main__':
+    print_art()
+    scraper = create_scraper()
+
+    timer = HourlyTimer([lambda scraper: restart_scraper(scraper)])
     timer.start()
 
+    print("[Main] Exiting")

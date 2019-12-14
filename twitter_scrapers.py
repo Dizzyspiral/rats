@@ -15,6 +15,7 @@ class SubstreamScraper(threading.Thread):
         threading.Thread.__init__(self)
         self.substreams = []
         self.tags = []
+        self.force_exit = False
 
     def add_substream(self, tags, callback):
         self.substreams.append([tags, callback])
@@ -23,7 +24,13 @@ class SubstreamScraper(threading.Thread):
     def run(self):
         try:
             for tweet in api.GetStreamFilter(track=self.tags):
+
+                # Force exit only works if we're still getting tweets
+                if self.force_exit:
+                    break
+
                 raw_tweet = json.dumps(tweet)
+
                 for tags, callback in self.substreams:
                     for tag in tags:
                         if raw_tweet.find(tag) != -1:
