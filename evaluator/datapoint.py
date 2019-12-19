@@ -19,7 +19,7 @@ class DataPoint:
         diff = digits - len(s)
         
         if diff > 0:
-            for i in xrange(diff):
+            for i in range(diff):
                 s = "0" + s
             
         return s
