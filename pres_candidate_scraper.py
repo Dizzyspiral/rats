@@ -4,6 +4,8 @@ import time
 from twitter_scrapers import SubstreamScraper
 from tweet_files import HourlyTweetFile
 from timers import HourlyTimer
+from tweet_files import MinuteTweetFile
+from timers import MinuteTimer
 
 candidates = {
 #        'michael_bennet': ['@MichaelBennet', '@SenatorBennet'],
@@ -11,8 +13,8 @@ candidates = {
 #        'bill_de_blasio': ['@billdeBlasio', '@NYCMayor'],
 #        'cory_booker': ['@CoryBooker', '@CoryABooker2020', '@SenBooker'],
 #        'steve_bullock': ['@GovernorBullock'],
-#        'pete_buttigieg': ['@PeteButtigieg'],
-#        'julian_castro': ['@JulianCastro'],
+        'pete_buttigieg': ['@PeteButtigieg'],
+        'julian_castro': ['@JulianCastro'],
 #        'john_delaney': ['@JohnDelaney'],
 #        'tulsi_gabbard': ['@TulsiGabbard', '@TulsiPresident'],
 #        'kirsten_gillibrand': ['@SenGillibrand', '@gillibrandny'],
@@ -20,7 +22,7 @@ candidates = {
 #        'kamala_harris': ['@KamalaHarris','@SenKamalaHarris'],
 #        'john_hickenlooper': ['@Hickenlooper'],
 #        'jay_inslee': ['@JayInslee', '@GovInslee'],
-#        'amy_klobuchar': ['@amyklobuchar', '@SenAmyKlobuchar'],
+        'amy_klobuchar': ['@amyklobuchar', '@SenAmyKlobuchar'],
 #        'wayne_messam': ['@WayneMessam'],
 #        'seth_moulton': ['@sethmoulton', '@teammoulton'],
 #        'beto_orourke': ['@BetoORourke', '@RepBetoORourke'],
@@ -31,7 +33,7 @@ candidates = {
         'elizabeth_warren': ['@SenWarren', '@ewarren'],
 #        'bill_weld': ['@GovBillWeld'],
 #        'marianne_williamson': ['@marwilliamson'],
-#        'andrew_yang': ['@AndrewYang'],
+        'andrew_yang': ['@AndrewYang'],
 }
 
 # Sigh... global variable. Might be able to fix this, easy hack for now.
@@ -53,12 +55,15 @@ def create_scraper():
 
     for candidate, tags in candidates.items():
         print("[Main] Making scraper thread for '%s', '%s'" % (candidate, tags))
-        tweet_files.append(HourlyTweetFile(candidate + '.json', 'tweets'))
+#        tweet_files.append(HourlyTweetFile(candidate + '.json', 'tweets'))
+        tweet_files.append(MinuteTweetFile(candidate + '.json', 'tweets'))
         scraper.add_substream(tags, lambda tweet, tf=tweet_files[-1]: tf.write_tweet(tweet))
 
     scraper.start()
    
-def restart_scraper(scraper):
+def restart_scraper():
+    global scraper
+
     scraper.force_exit = True
     scraper.join()
     create_scraper()
@@ -66,9 +71,12 @@ def restart_scraper(scraper):
 
 if __name__ == '__main__':
     print_art()
-    scraper = create_scraper()
+    create_scraper()
 
-    timer = HourlyTimer([lambda scraper: restart_scraper(scraper)])
+#    timer = HourlyTimer([lambda: restart_scraper()])
+    timer = MinuteTimer([lambda: restart_scraper()])
     timer.start()
+    timer.join()
 
+    # We shouldn't ever get here
     print("[Main] Exiting")

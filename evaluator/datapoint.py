@@ -8,7 +8,7 @@ class DataPoint:
         self.filename = filename
         self.candidate = self._build_candidate_name()
         self.xlabel = self._build_xlabel()
-        self.classifier = self._load_classifier(class_pickle)
+        self.classifier_pickle = class_pickle
         self.value = self._build_value()
 
     def __lt__(self, other):
@@ -25,22 +25,20 @@ class DataPoint:
         return s
 
     def get_date_int(self):
-        matches = re.search("(\d+)-(\d+)-(\d\d\d\d)_(\d+)", self.filename)
+        matches = re.search("(\d+)-(\d+)-(\d\d\d\d)_(\d+)_(\d+)", self.filename)
         month = str(matches.group(1))
         day = str(matches.group(2))
         year = str(matches.group(3))
         hour = str(matches.group(4))
+        minute = str(matches.group(5))
 
         year = self._adjust_digits(year, 4)
         month = self._adjust_digits(month, 2)
         day = self._adjust_digits(day, 2)
         hour = self._adjust_digits(hour, 2)
+        minute = self._adjust_digits(minute, 2)
 
-        print(year + ":" + month + ":" + day + ":" + hour)
-
-        result = year + month + day + hour
-
-        print(result)
+        result = year + month + day + hour + minute
 
         return int(result)
 
@@ -64,8 +62,8 @@ class DataPoint:
         return name
 
     def _build_value(self):
-        # XXX: Check to make sure self.classifier is loaded first
-        results = tweeteval.classify_tweet_file(self.filename, self.classifier)
+        classifier = self._load_classifier(self.classifier_pickle)
+        results = tweeteval.classify_tweet_file(self.filename, classifier)
         percents = tweeteval.interpret_results(results)
 
         return percents['pos'] * 100
