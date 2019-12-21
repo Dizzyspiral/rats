@@ -1,6 +1,9 @@
 import sys
 import os
-from datetime import datetime
+import datetime
+import time
+import subprocess
+import tarfile
 #from mem_top import mem_top # Debugging memory leak
 
 import tweetdir
@@ -8,7 +11,7 @@ from datapoint import DataPoint
 import jsbuilder
 
 def print_usage():
-    print(sys.argv[0] + " num_hours num_candidates tweet_dir classifier_pickle js_outfile")
+    print(sys.argv[0] + " num_minutes num_candidates tweet_dir classifier_pickle js_outfile")
 
 def get_datapoints(tweet_files):
     datapoints = []
@@ -29,25 +32,38 @@ def write_js(datapoints):
 
 def archive_tweet_files(tweet_dir, tweet_files):
     print("[Main] Archiving...")
-    cur_time = datetime.now()
-    archive_file = "archive_" + cur_time.year + "-" + cur_time.month + "-" + cur_time.day + "_" + cur_time.hour + "_" + cur_time.minute + ".tgz"
-    os.system("tar -czvf" + archive_file + " " + " ".join(tweet_files))
+    cur_time = datetime.datetime.now()
+    archive_file = "archive_" + str(cur_time.year) + "-" + str(cur_time.month) + "-" + str(cur_time.day) + "_" + str(cur_time.hour) + "_" + str(cur_time.minute) + ".tgz"
+
+    with tarfile.open(archive_file, 'w:xz') as t:
+        for f in tweet_files:
+            t.add(f)
+
+    cmd = ["rm"]
+    cmd = cmd.extend(tweet_files)
+    print(cmd)
+    subprocess.check_call(cmd)
 
 if __name__ == '__main__':
     if len(sys.argv) < 6:
         print_usage()
         exit()
 
-    num_hours = int(sys.argv[1])
+    num_minutes = int(sys.argv[1])
     num_candidates = int(sys.argv[2])
     tweet_dir = sys.argv[3]
     class_pickle = sys.argv[4]
     jsfile = sys.argv[5]
     datapoints = []
 
-    tweet_files = tweetdir.get_recent_files(tweet_dir, num_hours, num_candidates)
-    datapoints.extend(get_datapoints(tweet_files))
-    write_js(datapoints)
-    archive_tweet_files(tweet_dir, tweet_files)
-    # Wait for minute to change, and do it again
+    while True:
+        prev_minute = datetime.datetime.now().minute
+        tweet_files = tweetdir.get_recent_files(tweet_dir, num_minutes, num_candidates)
+        datapoints.extend(get_datapoints(tweet_files))
+        write_js(datapoints)
+        archive_tweet_files(tweet_dir, tweet_files)
+        
+        # Wait for minute to change, and do it again
+#        while prev_minute == datetime.datetime.now().minute:
+#            time.sleep(1)
 

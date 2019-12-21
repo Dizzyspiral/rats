@@ -54,7 +54,7 @@ class DataPoint:
 
     def _build_candidate_name(self):
         """ Get a candidate's name from the tweet filename"""
-        matches = re.search("\d+-\d+-\d\d\d\d_\d+_(\w+)", self.filename)
+        matches = re.search("\d+-\d+-\d\d\d\d_\d+_\d+_(\w+)", self.filename)
         name = matches.group(1)
         # This replaces underscores with spaces and capitalizes the parts of the name
         name = " ".join([x.capitalize() for x in name.split('_')])

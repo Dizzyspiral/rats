@@ -28,13 +28,13 @@ def create_xlabels_var(datapoints):
 def build_js(datapoints):
     js = ""
     data_by_candidate = get_candidate_lists(datapoints)
-    xlabels = None
+    xlabels_js = None
     
     for candidate, data in data_by_candidate.items():
         data.sort(key=lambda x: x.get_date_int())
         js += create_candidate_var(data)
 
-        if not xlabels:
+        if not xlabels_js:
             xlabels_js = create_xlabels_var(data)
 
     js += xlabels_js
