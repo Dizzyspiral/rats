@@ -55,8 +55,8 @@ def create_scraper():
 
     for candidate, tags in candidates.items():
         print("[Main] Making scraper thread for '%s', '%s'" % (candidate, tags))
-#        tweet_files.append(HourlyTweetFile(candidate + '.json', 'tweets'))
-        tweet_files.append(MinuteTweetFile(candidate + '.json', 'tweets'))
+        tweet_files.append(HourlyTweetFile(candidate + '.json', 'tweets'))
+#        tweet_files.append(MinuteTweetFile(candidate + '.json', 'tweets'))
         scraper.add_substream(tags, lambda tweet, tf=tweet_files[-1]: tf.write_tweet(tweet))
 
     scraper.start()
@@ -73,8 +73,8 @@ if __name__ == '__main__':
     print_art()
     create_scraper()
 
-#    timer = HourlyTimer([lambda: restart_scraper()])
-    timer = MinuteTimer([lambda: restart_scraper()])
+    timer = HourlyTimer([lambda: restart_scraper()])
+#    timer = MinuteTimer([lambda: restart_scraper()])
     timer.start()
     timer.join()
 

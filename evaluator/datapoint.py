@@ -25,20 +25,22 @@ class DataPoint:
         return s
 
     def get_date_int(self):
-        matches = re.search("(\d+)-(\d+)-(\d\d\d\d)_(\d+)_(\d+)", self.filename)
+        matches = re.search("(\d+)-(\d+)-(\d\d\d\d)_(\d+)", self.filename)
+#        matches = re.search("(\d+)-(\d+)-(\d\d\d\d)_(\d+)_(\d+)", self.filename)
         month = str(matches.group(1))
         day = str(matches.group(2))
         year = str(matches.group(3))
         hour = str(matches.group(4))
-        minute = str(matches.group(5))
+#        minute = str(matches.group(5))
 
         year = self._adjust_digits(year, 4)
         month = self._adjust_digits(month, 2)
         day = self._adjust_digits(day, 2)
         hour = self._adjust_digits(hour, 2)
-        minute = self._adjust_digits(minute, 2)
+#        minute = self._adjust_digits(minute, 2)
 
-        result = year + month + day + hour + minute
+#        result = year + month + day + hour + minute
+        result = year + month + day + hour
 
         return int(result)
 
@@ -54,7 +56,8 @@ class DataPoint:
 
     def _build_candidate_name(self):
         """ Get a candidate's name from the tweet filename"""
-        matches = re.search("\d+-\d+-\d\d\d\d_\d+_\d+_(\w+)", self.filename)
+        matches = re.search("\d+-\d+-\d\d\d\d_\d+_(\w+)", self.filename)
+#        matches = re.search("\d+-\d+-\d\d\d\d_\d+_\d+_(\w+)", self.filename)
         name = matches.group(1)
         # This replaces underscores with spaces and capitalizes the parts of the name
         name = " ".join([x.capitalize() for x in name.split('_')])
