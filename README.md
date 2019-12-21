@@ -1,4 +1,6 @@
 # Real-time Analysis of Twitter Sentiment (RATS)
+**WARNING: This readme applies to an older version of this repo. Documentation updates are coming... sometime.**
+
 Real-time Analysis of Twitter Sentiment (RATS) is a project that analyzes the sentiment of twitter data scraped from configurable tag sets.
 For more information on the twitter scraper, see below.
 
