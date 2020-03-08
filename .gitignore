@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Test and experimentation files
+*.tgz
+*.tar
+*.txt
