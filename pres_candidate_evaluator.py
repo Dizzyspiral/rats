@@ -54,14 +54,19 @@ def get_tweets_from_file(tweet_filename):
     """
     tweets = []
 
+#    print("[Main] getting tweets from file '" + str(tweet_filename) + "'")
+
     with open(tweet_filename, 'r') as f:
         for raw_tweet in f:
             try:
                 tweet = json.loads(raw_tweet)
                 tweets.append(tweet["text"])
+#                print("[Main] loading tweet text '" + str(tweet["text"]))
             except Exception as e:
                 print("Got exception loading tweet as JSON (ignoring tweet and continuing):\n")
                 print(e)
+
+#    print("[Main] loaded tweets: " + str(tweets))
 
     return tweets
 
@@ -122,8 +127,11 @@ def build_js_data(xlabels, results):
 
 def update_data(tweets_dir, num_hours, num_candidates):
     tweet_filenames = get_most_recent_filenames(tweets_dir, num_hours * num_candidates)
+#    print("[Main] update_data tweet_filename = " + str(tweet_filenames))
     xlabels = build_xaxis_labels(tweet_filenames)
+#    print("[Main] update_data xlabels = " + str(xlabels))
     results = build_results(tweet_filenames)
+#    print("[Main] update_data results = " + str(results))
 
     return xlabels, results
 
