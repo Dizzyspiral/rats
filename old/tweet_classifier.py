@@ -21,7 +21,7 @@ def classify_tweet_text(tweet):
 
 def classify_tweet(tweet_file):
     with open(tweet_file, 'rt') as f:
-        ret = classify_tweet_text(f)
+        ret = classify_tweet_text(f.read())
 
     return ret
 
