@@ -1,0 +1,53 @@
+<html>
+<script src="./chart.js/dist/Chart.min.js"></script>
+<script src="./day.js"></script>
+<h1>U.S. 2020 Presidential Candidate Sentiment</h1>
+<h2>According to Twitter</h2>
+<div id="chart">
+    <canvas id="myChart"  style="display: block;"></canvas>
+</div>
+<script>
+var canvas = document.getElementById('myChart');
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: xlabels,
+        datasets: [
+            {
+            label: 'Joe Biden',
+            data: biden_data,
+            backgroundColor: 'rgba(255, 99, 132, 0.0)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+            },
+            {
+            label: 'Donald Trump',
+            data: trump_data,
+            backgroundColor: 'rgba(255, 206, 86, 0.0)',
+            borderColor: 'rgba(255, 206, 86, 1)',
+            borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: false
+                },
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'percent positive tweets'
+                }
+            }]
+        }
+    }
+});
+</script>
+
+<p>
+Powered by <a href="https://github.com/dizzyspiral/rats" target="blank">RATS</a>
+</p>
+</html>
