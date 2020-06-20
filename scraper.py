@@ -110,9 +110,13 @@ if __name__ == '__main__':
                 classification = classify_tweet(text, classifier)
                 debug_print("Tweet successfully classified as '" + str(classification) + "'")
                 debug_print("Adding tweet to database...")
-                cursor.execute("INSERT INTO tweets VALUES(?,?,?,?)", (tag, time, classification, text))
-                conn.commit()
-                debug_print("Tweet successfully added to database.")
+
+                try:
+                    cursor.execute("INSERT INTO tweets VALUES(?,?,?,?)", (tag, time, classification, text))
+                    conn.commit()
+                    debug_print("Tweet successfully added to database.")
+                except:
+                    print("Database busy (analysis is probably running). Skipping to next tweet")
 
         # Check time for hour change
         now = datetime.datetime.now()
