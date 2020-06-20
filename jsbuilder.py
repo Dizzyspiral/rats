@@ -96,7 +96,15 @@ if __name__ == '__main__':
     minute_delta = datetime.timedelta(minutes=1)
     hour_delta = datetime.timedelta(hours=1)
     day_delta = datetime.timedelta(days=1)
+    week_delta = datetime.timedelta(weeks=1)
 
+    print("Building day.js...")
     trump, biden, labels = get_datapoints(day_delta, hour_delta, conn)
     write_js_file(trump, biden, labels, 'day.js')
+    print("day.js complete.")
     
+    print("Building week.js...")
+    trump, biden, labels = get_datapoints(week_delta, hour_delta, conn)
+    write_js_file(trump, biden, labels, 'week.js')
+    print("week.js complete.")
+
