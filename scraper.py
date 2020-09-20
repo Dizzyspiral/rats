@@ -42,7 +42,7 @@ def configure_sqlite(dbname):
     # Check if table tweets already exists
     if not table_exists("tweets", cursor):
         # If not, create it
-        cursor.execute("CREATE TABLE tweets (tag text, time text, classification text, tweet text)")
+        cursor.execute("CREATE TABLE tweets (tag text, time text, classification text)")
 
     return conn
 
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                 debug_print("Adding tweet to database...")
 
                 try:
-                    cursor.execute("INSERT INTO tweets VALUES(?,?,?,?)", (tag, time, classification, text))
+                    cursor.execute("INSERT INTO tweets VALUES(?,?,?)", (tag, time, classification))
                     conn.commit()
                     debug_print("Tweet successfully added to database.")
                 except:
