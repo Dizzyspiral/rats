@@ -43,6 +43,7 @@ def configure_sqlite(dbname):
     if not table_exists("tweets", cursor):
         # If not, create it
         cursor.execute("CREATE TABLE tweets (tag text, time text, classification text)")
+        conn.commit()
 
     return conn
 
